@@ -1,8 +1,10 @@
 package com.lcwd.electronic.store.controllers;
 
+import com.lcwd.electronic.store.dtos.ApiResponseMsg;
 import com.lcwd.electronic.store.dtos.UserDto;
 import com.lcwd.electronic.store.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +34,16 @@ public class UserController {
 
     // delete
     @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable String userId) {
+    public ResponseEntity<ApiResponseMsg> deleteUser(@PathVariable String userId) {
         userService.deleteUser(userId);
-        return ResponseEntity.ok("User deleted successfully with ID: " + userId);
+        ApiResponseMsg msg = ApiResponseMsg
+                .builder()
+                .message("User deleted successfully with ID: ")
+                .success(true)
+                .status(HttpStatus.OK)
+                .build();
+
+        return new ResponseEntity<>(msg,HttpStatus.OK);
     }
 
     // getAll
@@ -59,9 +68,9 @@ public class UserController {
     }
 
     // search users
-    @GetMapping("/search/{keyword}")
-    public ResponseEntity<List<UserDto>> searchUsers(@PathVariable String keyword) {
-        List<UserDto> users = userService.searchUser(keyword);
+    @GetMapping("/search/{keywords}")
+    public ResponseEntity<List<UserDto>> searchUsers(@PathVariable String keywords) {
+        List<UserDto> users = userService.searchUser(keywords);
         return ResponseEntity.ok(users);
     }
 }
