@@ -1,11 +1,18 @@
 package com.lcwd.electronic.store.services.serviceImpl;
 
+import com.lcwd.electronic.store.dtos.PageableResponce;
 import com.lcwd.electronic.store.dtos.UserDto;
 import com.lcwd.electronic.store.entities.User;
+import com.lcwd.electronic.store.exceptions.ResourceNotFoundException;
+import com.lcwd.electronic.store.helper.Helper;
 import com.lcwd.electronic.store.repositories.UserRepo;
 import com.lcwd.electronic.store.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +40,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(UserDto userDto, String userId) {
         User user = userRepo.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found with id: " + userId)
+                () -> new ResourceNotFoundException("User not found with id: " + userId)
         );
 
         // Updating fields
@@ -51,23 +58,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(String userId) {
         User user = userRepo.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found with id: " + userId)
+                () -> new ResourceNotFoundException("User not found with id: " + userId)
         );
         userRepo.delete(user);
     }
 
     @Override
-    public List<UserDto> getAllUser() {
-        List<User> users = userRepo.findAll();
-        return users.stream()
-                .map(this::entityToDto)
-                .collect(Collectors.toList());
+    public PageableResponce<UserDto> getAllUser(int pageNumber, int pageSize , String sortBy , String sortDir) {
+
+        Sort sort= (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
+
+        Pageable pageable= PageRequest.of(pageNumber, pageSize,sort);
+
+        Page<User> page = userRepo.findAll(pageable);
+
+        PageableResponce<UserDto> responce = Helper.getPageableResponce(page, UserDto.class);
+
+
+        return responce;
     }
 
     @Override
     public UserDto getUserById(String userId) {
         User user = userRepo.findById(userId).orElseThrow(
-                () -> new RuntimeException("User not found with id: " + userId)
+                () -> new ResourceNotFoundException("User not found with id: " + userId)
         );
         return entityToDto(user);
     }
@@ -75,7 +89,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserByEmail(String email) {
         User user = userRepo.findByEmail(email).orElseThrow(
-                () -> new RuntimeException("User not found with email: " + email)
+                () -> new ResourceNotFoundException("User not found with email: " + email)
         );
         return entityToDto(user);
     }

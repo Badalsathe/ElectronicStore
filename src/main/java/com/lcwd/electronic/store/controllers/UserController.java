@@ -1,6 +1,7 @@
 package com.lcwd.electronic.store.controllers;
 
 import com.lcwd.electronic.store.dtos.ApiResponseMsg;
+import com.lcwd.electronic.store.dtos.PageableResponce;
 import com.lcwd.electronic.store.dtos.UserDto;
 import com.lcwd.electronic.store.services.UserService;
 import jakarta.validation.Valid;
@@ -47,10 +48,15 @@ public class UserController {
         return new ResponseEntity<>(msg, HttpStatus.OK);
     }
 
-    // Get all users
+    // ✅ Get all users (fixed)
     @GetMapping
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<UserDto> allUsers = userService.getAllUser();
+    public ResponseEntity<PageableResponce<UserDto>> getAllUsers(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "name", required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
+    ) {
+        PageableResponce<UserDto> allUsers = userService.getAllUser(pageNumber, pageSize, sortBy, sortDir);
         return ResponseEntity.ok(allUsers);
     }
 
