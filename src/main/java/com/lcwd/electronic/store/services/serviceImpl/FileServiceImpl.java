@@ -15,49 +15,48 @@ import java.util.UUID;
 @Service
 public class FileServiceImpl implements FileService {
 
-    private Logger logger= LoggerFactory.getLogger(FileServiceImpl.class);
-
+    private Logger logger = LoggerFactory.getLogger(FileServiceImpl.class);
 
     @Override
     public String uploadFile(MultipartFile file, String path) throws IOException {
 
         String originalFilename = file.getOriginalFilename();
-        logger.info("Filename : {} ", originalFilename );
+        logger.info("Filename : {} ", originalFilename);
 
-        String filename= UUID.randomUUID().toString();
+        String filename = UUID.randomUUID().toString();
 
-        String extension=originalFilename.substring(originalFilename.lastIndexOf("."));
+        // Extract extension without the dot
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
 
-        String fileNameWithExtension=filename +extension;
+        String fileNameWithExtension = filename + "." + extension;
+        String fullPathwithFileName = path + fileNameWithExtension;
 
-        String fullPathwithFileName =path+ File.separator+fileNameWithExtension ;
+        logger.info("Full image path : {} ", fullPathwithFileName);
 
-        if(extension.equalsIgnoreCase("png")|| extension.equalsIgnoreCase("jpeg")) {
+        // Validate file extension
+        if (extension.equalsIgnoreCase("png") ||
+                extension.equalsIgnoreCase("jpeg") ||
+                extension.equalsIgnoreCase("jpg")) {
+
+            logger.info("File extension is {} ", extension);
 
             File folder = new File(path);
-
-            if(!folder.exists()) {
-
+            if (!folder.exists()) {
                 folder.mkdirs();
-
             }
+
             Files.copy(file.getInputStream(), Paths.get(fullPathwithFileName));
-
             return fileNameWithExtension;
-        }else {
 
-            throw new BadApiRequest("File with this " + extension + "not allowed");
+        } else {
+            throw new BadApiRequest("File with this ." + extension + " not allowed");
         }
-
     }
 
     @Override
     public InputStream getResource(String path, String name) throws FileNotFoundException {
 
-        String fullPath=path+File.separator+name;
-
-        InputStream inputStream=new FileInputStream(fullPath);
-
-        return inputStream;
+        String fullPath = path + File.separator + name;
+        return new FileInputStream(fullPath);
     }
 }

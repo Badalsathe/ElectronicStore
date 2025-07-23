@@ -8,13 +8,21 @@ import com.lcwd.electronic.store.helper.Helper;
 import com.lcwd.electronic.store.repositories.UserRepo;
 import com.lcwd.electronic.store.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -27,6 +35,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ModelMapper mapper;
+
+    @Value("@{user.profile.image.path}")
+    private String imagepath;
+
+    private Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
+
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -60,15 +74,30 @@ public class UserServiceImpl implements UserService {
         User user = userRepo.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException("User not found with id: " + userId)
         );
+
+
+        //   image/user/abc.png
+        String fullPath = imagepath + user.getImageName()
+
+        try {
+            Path path = Paths.get(fullPath);
+            Files.delete(path);
+            System.out.println("File deleted successfully.");
+        } catch (NoSuchFileException ex) {
+
+            System.out.println("File not found: " + ex.getMessage());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         userRepo.delete(user);
     }
 
     @Override
-    public PageableResponce<UserDto> getAllUser(int pageNumber, int pageSize , String sortBy , String sortDir) {
+    public PageableResponce<UserDto> getAllUser(int pageNumber, int pageSize, String sortBy, String sortDir) {
 
-        Sort sort= (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
+        Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
 
-        Pageable pageable= PageRequest.of(pageNumber, pageSize,sort);
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
         Page<User> page = userRepo.findAll(pageable);
 
