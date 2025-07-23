@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
 
 
         //   image/user/abc.png
-        String fullPath = imagepath + user.getImageName()
+        String fullPath = imagepath + user.getImageName();
 
         try {
             Path path = Paths.get(fullPath);
