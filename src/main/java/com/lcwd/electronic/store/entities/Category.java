@@ -19,7 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class Category {
 
     @Id
-    @Column(name = "Id")
+
+    @Column(name = "category_Id")
     private  String categoryId;
 
     @Column(name="category_title", length = 60,nullable = false)
