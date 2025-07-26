@@ -24,20 +24,26 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
+        logger.info("Creating new category: {}", categoryDto.getTitle());
         CategoryDto createdCategory = categoryService.create(categoryDto);
+        logger.info("Category created successfully with ID: {}", createdCategory.getCategoryId());
         return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
 
     @PutMapping("/{categoryId}")
     public ResponseEntity<CategoryDto> updateCategory(@Valid @RequestBody CategoryDto categoryDto,
                                                       @PathVariable String categoryId) {
+        logger.info("Updating category with ID: {}", categoryId);
         CategoryDto updatedCategory = categoryService.update(categoryDto, categoryId);
+        logger.info("Category updated successfully: {}", updatedCategory.getTitle());
         return ResponseEntity.ok(updatedCategory);
     }
 
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<ApiResponseMsg> deleteCategory(@PathVariable String categoryId) {
+        logger.info("Deleting category with ID: {}", categoryId);
         categoryService.delete(categoryId);
+        logger.info("Category deleted successfully with ID: {}", categoryId);
         ApiResponseMsg response = ApiResponseMsg.builder()
                 .message("Category deleted successfully with ID: " + categoryId)
                 .success(true)
@@ -48,7 +54,9 @@ public class CategoryController {
 
     @GetMapping("/{categoryId}")
     public ResponseEntity<CategoryDto> getCategory(@PathVariable String categoryId) {
+        logger.info("Fetching category by ID: {}", categoryId);
         CategoryDto categoryDto = categoryService.get(categoryId);
+        logger.info("Category fetched: {}", categoryDto.getTitle());
         return ResponseEntity.ok(categoryDto);
     }
 
@@ -59,7 +67,10 @@ public class CategoryController {
             @RequestParam(value = "sortBy", defaultValue = "title", required = false) String sortBy,
             @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir
     ) {
+        logger.info("Fetching all categories - pageNumber: {}, pageSize: {}, sortBy: {}, sortDir: {}",
+                pageNumber, pageSize, sortBy, sortDir);
         PageableResponce<CategoryDto> response = categoryService.getAll(pageNumber, pageSize, sortBy, sortDir);
+        logger.info("Total categories fetched: {}", response.getContent().size());
         return ResponseEntity.ok(response);
     }
 }
