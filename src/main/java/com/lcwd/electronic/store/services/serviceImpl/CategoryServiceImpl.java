@@ -1,7 +1,7 @@
 package com.lcwd.electronic.store.services.serviceImpl;
 
 import com.lcwd.electronic.store.dtos.CategoryDto;
-import com.lcwd.electronic.store.dtos.PageableResponce;
+import com.lcwd.electronic.store.dtos.PageableResponse;
 import com.lcwd.electronic.store.entities.Category;
 import com.lcwd.electronic.store.exceptions.ResourceNotFoundException;
 import com.lcwd.electronic.store.helper.Helper;
@@ -22,8 +22,8 @@ public class CategoryServiceImpl implements CategoryService {
     private ModelMapper modelMapper;
 
     @Override
-    public CategoryDto create(CategoryDto categoryDto) {
-        Category category = modelMapper.map(categoryDto, Category.class);
+    public CategoryDto create(CategoryDto categoryDto11) {
+        Category category = modelMapper.map(categoryDto11, Category.class);
         Category savedCategory = categoryRepo.save(category);
         return modelMapper.map(savedCategory, CategoryDto.class);
     }
@@ -49,7 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public PageableResponce<CategoryDto> getAll(int pageNumber, int pageSize, String sortBy, String sortDir) {
+    public PageableResponse<CategoryDto> getAll(int pageNumber, int pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();

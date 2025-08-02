@@ -2,7 +2,7 @@ package com.lcwd.electronic.store.controllers;
 
 import com.lcwd.electronic.store.dtos.ApiResponseMsg;
 import com.lcwd.electronic.store.dtos.CategoryDto;
-import com.lcwd.electronic.store.dtos.PageableResponce;
+import com.lcwd.electronic.store.dtos.PageableResponse;
 import com.lcwd.electronic.store.services.CategoryService;
 
 import jakarta.validation.Valid;
@@ -61,7 +61,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<PageableResponce<CategoryDto>> getAllCategories(
+    public ResponseEntity<PageableResponse<CategoryDto>> getAllCategories(
             @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue = "title", required = false) String sortBy,
@@ -69,7 +69,7 @@ public class CategoryController {
     ) {
         logger.info("Fetching all categories - pageNumber: {}, pageSize: {}, sortBy: {}, sortDir: {}",
                 pageNumber, pageSize, sortBy, sortDir);
-        PageableResponce<CategoryDto> response = categoryService.getAll(pageNumber, pageSize, sortBy, sortDir);
+        PageableResponse<CategoryDto> response = categoryService.getAll(pageNumber, pageSize, sortBy, sortDir);
         logger.info("Total categories fetched: {}", response.getContent().size());
         return ResponseEntity.ok(response);
     }

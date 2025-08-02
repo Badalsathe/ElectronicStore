@@ -9,7 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PageableResponce<T> {
+public class PageableResponse<T> {
 
     private List<T> content ;
 

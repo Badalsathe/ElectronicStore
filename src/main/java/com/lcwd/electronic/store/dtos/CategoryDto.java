@@ -18,7 +18,7 @@ public class CategoryDto {
     private String categoryId;
 
     @NotBlank
-    @Min(value = 4,message = "title must be of minimum 4 charcters")
+    @Min(value = 4,message = "title must be of minimum 4 char")
     private String title;
 
     @NotBlank(message = "Description required....")

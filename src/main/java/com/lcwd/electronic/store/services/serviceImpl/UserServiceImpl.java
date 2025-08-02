@@ -1,6 +1,6 @@
 package com.lcwd.electronic.store.services.serviceImpl;
 
-import com.lcwd.electronic.store.dtos.PageableResponce;
+import com.lcwd.electronic.store.dtos.PageableResponse;
 import com.lcwd.electronic.store.dtos.UserDto;
 import com.lcwd.electronic.store.entities.User;
 import com.lcwd.electronic.store.exceptions.ResourceNotFoundException;
@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ModelMapper mapper;
+
 
     @Value("@{user.profile.image.path}")
     private String imagepath;
@@ -93,7 +94,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageableResponce<UserDto> getAllUser(int pageNumber, int pageSize, String sortBy, String sortDir) {
+    public PageableResponse<UserDto> getAllUser(int pageNumber, int pageSize, String sortBy, String sortDir) {
 
         Sort sort = (sortDir.equalsIgnoreCase("desc")) ? (Sort.by(sortBy).descending()) : (Sort.by(sortBy).ascending());
 
@@ -101,7 +102,7 @@ public class UserServiceImpl implements UserService {
 
         Page<User> page = userRepo.findAll(pageable);
 
-        PageableResponce<UserDto> responce = Helper.getPageableResponce(page, UserDto.class);
+        PageableResponse<UserDto> responce = Helper.getPageableResponce(page, UserDto.class);
 
 
         return responce;
